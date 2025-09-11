@@ -66,11 +66,11 @@ public class Item implements Serializable {
         this.name = name;
     }
 
-    public int getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
@@ -80,11 +80,6 @@ public class Item implements Serializable {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-
-    public void setPrice(Integer price) {
-        this.price = price;
     }
 
     public Boolean getIsAvailable() {

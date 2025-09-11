@@ -3,8 +3,6 @@ package com.botmg3002.canteen.schema.Item;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.botmg3002.canteen.model.SubItemType;
-
 public class ItemResponse {
     private Long id;
     private String name;
@@ -12,7 +10,7 @@ public class ItemResponse {
     private Integer price;
     private Long canteenId;
     private Long categoryId;
-    private Set<SubItemType> subItemTypes = new HashSet<>();
+    private Set<SubItemTypeResponse> subItemTypes = new HashSet<>();
     private Boolean isAvailable;
 
     public Long getId() {
@@ -39,11 +37,11 @@ public class ItemResponse {
         this.imageUrl = imageUrl;
     }
 
-    public int getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
@@ -71,11 +69,11 @@ public class ItemResponse {
         this.isAvailable = isAvailable;
     }
 
-    public Set<SubItemType> getSubItemTypes() {
+    public Set<SubItemTypeResponse> getSubItemTypes() {
         return subItemTypes;
     }
 
-    public void setSubItemTypes(Set<SubItemType> subItemTypes) {
+    public void setSubItemTypes(Set<SubItemTypeResponse> subItemTypes) {
         this.subItemTypes = subItemTypes;
     }
 

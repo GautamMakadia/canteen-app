@@ -9,10 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 
 import com.botmg3002.canteen.model.Image;
 import com.botmg3002.canteen.repository.ImageRepository;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @RequestMapping("image")
 public class ImageController {
 
-    private final String uploadDir = "/upload";
+    private final String uploadDir = "/images";
 
     @Autowired
     private ImageRepository imageRepository;
@@ -64,17 +64,17 @@ public class ImageController {
 
         } catch (MalformedURLException e) {
             return ResponseEntity.badRequest().build();
-        } catch (IOException e) {
+        } catch (IOException e) {   
             return ResponseEntity.internalServerError().build();
         }
 
     }
 
     @PostMapping()
-    public ResponseEntity<Map.Entry<String, String>> uploadImage(@RequestParam MultipartFile file) {
+    public ResponseEntity<Void> uploadImage(@RequestParam MultipartFile file) {
 
         if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.entry("error", "No File Found"));
+            return ResponseEntity.badRequest().build();
         }
 
         try {
@@ -86,7 +86,7 @@ public class ImageController {
 
             image = imageRepository.save(image);
 
-            return ResponseEntity.ok(Map.entry("id", String.valueOf(image.getId())));
+            return ResponseEntity.created(URI.create("/image/"+image.getId())).build();
 
         } catch (IOException ex) {
             throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());

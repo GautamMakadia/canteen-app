@@ -3,77 +3,109 @@ package com.botmg3002.canteen.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.botmg3002.canteen.model.CartItem;
 import com.botmg3002.canteen.model.Customer;
+import com.botmg3002.canteen.model.User;
 import com.botmg3002.canteen.schema.cart.CartItemMapper;
+import com.botmg3002.canteen.schema.cart.CartItemRemoveResponse;
+import com.botmg3002.canteen.schema.cart.CartItemRequest;
 import com.botmg3002.canteen.schema.cart.CartItemResponse;
 import com.botmg3002.canteen.service.CartItemService;
 import com.botmg3002.canteen.service.CustomerService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("cart")
 public class CartController {
 
-    @Autowired
-    private CartItemService cartItemService;
+	@Autowired
+	private CartItemService cartItemService;
 
-    @Autowired
-    private CustomerService customerService;
+	@Autowired
+	private CustomerService customerService;
 
-    @Autowired
-    private CartItemMapper cartItemMapper;
+	@Autowired
+	private CartItemMapper cartItemMapper;
 
-    @PostMapping("/add/item/{itemId}")
-    public ResponseEntity<CartItemResponse> addToCart(@RequestHeader("X-USER-ID") Long id,
-            @PathVariable Long itemId) {
+	@PostMapping("/add")
+	public ResponseEntity<CartItemResponse> addToCart(Authentication authentication,
+			@RequestBody CartItemRequest cartItemRequest) {
 
-        Customer customer = customerService
-                .findByUserId(id)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_ACCEPTABLE, "No Customer Found"));
+		User user = (User) authentication.getPrincipal();
 
-        CartItem cartItem = cartItemService.addCartItem(customer, itemId);
+		Customer customer = customerService
+				.findByUserId(user.getId())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,
+						"No Customer Found"));
 
-        return ResponseEntity.ok(cartItemMapper.toResponse(cartItem));
-    }
+		CartItem cartItem = cartItemService.addToCart(customer, cartItemRequest);
 
-    @DeleteMapping("/remove/item/{itemId}")
-    public ResponseEntity<String> postMethodName(@RequestHeader("X-USER-ID") Long userId, @PathVariable Long itemId) {
-        Customer customer = customerService
-                .findByUserId(userId)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_ACCEPTABLE, "No Customer Found"));
+		return ResponseEntity.ok(cartItemMapper.toResponse(cartItem));
+	}
 
-        if (!cartItemService.removeCartItem(customer, itemId)) {
-            return ResponseEntity.notFound().build();
-        }
+	@DeleteMapping("/{id}")
+	public ResponseEntity<CartItemRemoveResponse> postMethodName(Authentication authentication,
+			@PathVariable Long id) {
+		User user = (User) authentication.getPrincipal();
 
-        return ResponseEntity.noContent().build();
-    }
+		Customer customer = customerService
+				.findByUserId(user.getId())
+				.orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_ACCEPTABLE,
+						"No Customer Found"));
 
-    @GetMapping("")
-    public ResponseEntity<List<CartItemResponse>> getMethodName(@RequestHeader("X-USER-ID") Long userId) {
-        Customer customer = customerService
-                .findByUserId(userId)
-                .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_ACCEPTABLE, "No Customer Found"));
+		Integer quantity = cartItemService.removeCartItem(customer, id);
 
-        return ResponseEntity.ok(
-                customer.getCartItems()
-                        .stream()
-                        .map(cartItemMapper::toResponse)
-                        .collect(Collectors.toList())
-        );
-    }
+		CartItemRemoveResponse response = new CartItemRemoveResponse(
+				quantity == 0 ? "Item Deleted" : "Item Removed", quantity);
+
+		return ResponseEntity.ok(response);
+	}
+
+	@GetMapping("")
+	public ResponseEntity<List<CartItemResponse>> findByCustomer(Authentication authentication) {
+		User user = (User) authentication.getPrincipal();
+		Customer customer = customerService
+				.findByUserId(user.getId())
+				.orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_ACCEPTABLE,
+						"No Customer Found"));
+
+		return ResponseEntity.ok(
+				customer.getCartItems()
+						.stream()
+						.map(cartItemMapper::toResponse)
+						.collect(Collectors.toList()));
+	}
+
+	@GetMapping("/canteen/{canteenId}")
+	public ResponseEntity<List<CartItemResponse>> fingByCanteenId(Authentication authentication,
+			@PathVariable Long canteenId) {
+		User user = (User) authentication.getPrincipal();
+		Customer customer = customerService
+				.findByUserId(user.getId())
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+						"user is not customer"));
+
+		return ResponseEntity.ok(
+				cartItemService.findByCustomerIdAndCanteenId(customer.getId(), canteenId)
+						.stream()
+						.map(cartItemMapper::toResponse)
+						.collect(Collectors.toList()));
+	}
 
 }

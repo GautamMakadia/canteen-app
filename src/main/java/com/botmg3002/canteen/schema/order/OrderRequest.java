@@ -1,7 +1,7 @@
 package com.botmg3002.canteen.schema.order;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.botmg3002.canteen.model.OrderStatus;
 
@@ -10,9 +10,8 @@ public class OrderRequest {
     private Long canteenId;
     private Long customerId;
     private int itemCount;
-    private int total;
     private OrderStatus status;
-    private List<OrderItemRequest> orderItems = new ArrayList<>();
+    private Set<Long> cartItemIds = new HashSet<>();
 
     public Long getCanteenId() {
         return canteenId;
@@ -32,22 +31,19 @@ public class OrderRequest {
     public void setItemCount(int itemCount) {
         this.itemCount = itemCount;
     }
-    public int getTotal() {
-        return total;
-    }
-    public void setTotal(int total) {
-        this.total = total;
-    }
-    public List<OrderItemRequest> getOrderItems() {
-        return orderItems;
-    }
-    public void setOrderItems(List<OrderItemRequest> orderItems) {
-        this.orderItems = orderItems;
-    }
+    
     public OrderStatus getStatus() {
         return status;
     }
     public void setStatus(OrderStatus status) {
         this.status = status;
     }
+    public Set<Long> getCartItemIds() {
+        return cartItemIds;
+    }
+    public void setCartItemIds(Set<Long> cartItemIds) {
+        this.cartItemIds = cartItemIds;
+    }
+    
+    
 }

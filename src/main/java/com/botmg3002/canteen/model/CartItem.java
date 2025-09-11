@@ -1,57 +1,89 @@
 package com.botmg3002.canteen.model;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "cart_item")
 public class CartItem {
 
-    @EmbeddedId
-    private CartItemKey id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
-    @MapsId("customerId")
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "customerId", nullable = false)
     private Customer customer;
 
     @ManyToOne
-    @MapsId("itemId")
-    @JoinColumn(name = "item_id", nullable = false)
+    @JoinColumn(name = "itemId", nullable = false)
     private Item item;
 
-    @Column(nullable = false)
-    private int quantity = 1;
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "subItemTypeId", nullable = true)
+    private SubItemType subItemType;
 
+    @Column(nullable = false)
+    private Integer quantity;
 
     public CartItem() {
-        
+
     }
 
-    public CartItem(CartItemKey id) {
+    public CartItem(Long id) {
         this.id = id;
+    }
+
+    public CartItem(Long id, Customer customer, Item item, SubItemType subItemType, Integer quantity) {
+        this.id = id;
+        this.customer = customer;
+        this.item = item;
+        this.subItemType = subItemType;
+        this.quantity = quantity;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
     }
 
     
 
-    public CartItem(Customer customer, Item item) {
-        this.customer = customer;
-        this.item = item;
+    public void incrementQuntity() {
+        this.quantity = (this.quantity == null ? 1 : this.quantity + 1);
     }
 
+    public void decrementQuantity() {
+        if (this.quantity == 1)
+            return;
 
-
-    public CartItemKey getId() {
-        return id;
+        quantity--;
     }
 
-    public void setId(CartItemKey id) {
-        this.id = id;
+    public SubItemType getSubItemType() {
+        return subItemType;
+    }
+
+    public void setSubItemType(SubItemType subItemType) {
+        this.subItemType = subItemType;
     }
 
     public Customer getCustomer() {
@@ -62,27 +94,11 @@ public class CartItem {
         this.customer = customer;
     }
 
-    public Item getItem() {
-        return item;
-    }
-
-    public void setItem(Item item) {
-        this.item = item;
-    }
-
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
-    }
-
-    public void incrementQuntity() {
-        quantity++;
-    }
-
-    public void decrementQuantity() {
-        quantity--;
     }
 }

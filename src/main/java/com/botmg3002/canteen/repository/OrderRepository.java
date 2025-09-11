@@ -6,7 +6,9 @@ import org.springframework.data.repository.query.Param;
 
 import com.botmg3002.canteen.model.Order;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -15,5 +17,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findAllByToday();
 
     @Query(value = "select o from Order o where o.createdAt >= :lastMonth AND o.customer.id = :customerId")
-    List<Order> findHistoryByCustomer(@Param("lastMonth") LocalDateTime lastMonth, @Param("customerId") Long customerId);
+    List<Order> findHistoryByCustomer(@Param("lastMonth") LocalDateTime lastMonth,
+            @Param("customerId") Long customerId);
+
+    default List<Order> findTodayOrdersByCanteenId(Long canteenId) {
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
+
+        return findByCanteenIdAndCreatedAtBetween(canteenId, startOfDay, endOfDay);
+    }
+
+    List<Order> findByCanteenIdAndCreatedAtBetween(Long canteenId, LocalDateTime start, LocalDateTime end);
 }

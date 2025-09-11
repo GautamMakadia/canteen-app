@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.NotAcceptableStatusException;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class GlobalExceptionConfig {
@@ -23,4 +25,23 @@ public class GlobalExceptionConfig {
         return ResponseEntity.status(HttpStatus.CONFLICT)
         .body(Map.of("error", ex.getMessage()));
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+        .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(NotAcceptableStatusException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(NotAcceptableStatusException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
+        .body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Map<String, String>> handleResponseStatusException(ResponseStatusException ex) {
+        return ResponseEntity.status(ex.getStatusCode())
+        .body(Map.of("error", ex.getReason()));
+    }
+    
 }

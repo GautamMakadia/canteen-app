@@ -40,6 +40,10 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(request -> request.requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/customer/**").hasRole(UserRole.CUSTOMER.toString())
                         .requestMatchers("/admin/**").hasRole(UserRole.ADMIN.toString())
+                        .requestMatchers("/order/**").authenticated()
+                        .requestMatchers("/image/**").hasAnyRole(UserRole.ADMIN.toString(), UserRole.CUSTOMER.toString())
+                        .requestMatchers("/cart/**").hasRole( UserRole.CUSTOMER.toString())
+                        .requestMatchers("/category/**").authenticated()
                         .anyRequest().authenticated())
                 .addFilterBefore(userFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

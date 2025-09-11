@@ -26,9 +26,9 @@ public class Order {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int itemCount;
+    private Integer itemCount;
 
-    private int total;
+    private Integer total;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<OrderItem> orderItems = new HashSet<>();
@@ -49,13 +49,13 @@ public class Order {
 
     public Order () {}
 
-    public Order(Canteen canteen, Customer customer, int itemCount) {
+    public Order(Canteen canteen, Customer customer, Integer itemCount) {
         this.canteen = canteen;
         this.customer = customer;
         this.itemCount = itemCount;
     }
 
-    public boolean addOrderItem(Item item, SubItemType subItemType, int quantitiy) {
+    public boolean addOrderItem(Item item, SubItemType subItemType, Integer quantitiy) {
         OrderItem orderItem = new OrderItem(this, item, subItemType, quantitiy);
         return orderItems.add(orderItem);
     }
@@ -68,19 +68,20 @@ public class Order {
         this.id = id;
     }
 
-    public int getItemCount() {
+
+    public Integer getItemCount() {
         return itemCount;
     }
 
-    public void setItemCount(int itemCount) {
+    public void setItemCount(Integer itemCount) {
         this.itemCount = itemCount;
     }
 
-    public int getTotal() {
+    public Integer getTotal() {
         return total;
     }
 
-    public void setTotal(int total) {
+    public void setTotal(Integer total) {
         this.total = total;
     }
 

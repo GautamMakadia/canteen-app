@@ -10,30 +10,45 @@ import com.botmg3002.canteen.schema.canteen.CanteenRequest;
 import com.botmg3002.canteen.schema.canteen.CanteenResponse;
 import com.botmg3002.canteen.schema.category.CategoryMapper;
 import com.botmg3002.canteen.schema.category.CategoryResponse;
+import com.botmg3002.canteen.schema.order.OrderMapper;
+import com.botmg3002.canteen.schema.order.OrderResponse;
 import com.botmg3002.canteen.service.CanteenService;
+import com.botmg3002.canteen.service.OrderService;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("canteen")
 public class CanteenController {
 
     @Autowired
+    private OrderService orderService;
+
+    @Autowired
     private CanteenService canteenService;
+
     @Autowired
     private CanteenMapper canteenMapper;
+
     @Autowired
     private CategoryMapper categoryMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
+
     @Autowired
     private ItemMapper itemMapper;
 
@@ -84,6 +99,18 @@ public class CanteenController {
                     return ResponseEntity.ok(categories);
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    // todo: get order history
+    @GetMapping("/{id}/order/today")
+    public ResponseEntity<List<OrderResponse>> findTodayOrders(Authentication authentication,
+                                                               @PathVariable("id") Long canteenId) {
+        var orders = orderService.findTodayOrdersByCanteenId(canteenId)
+                .stream()
+                .map(orderMapper::toResponse)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(orders);
     }
 
 }

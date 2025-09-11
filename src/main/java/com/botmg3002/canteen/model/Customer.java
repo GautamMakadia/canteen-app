@@ -42,6 +42,14 @@ public class Customer {
     public Customer() {
     }
 
+    
+
+    public Customer(Long id) {
+        this.id = id;
+    }
+
+
+
     public Customer(String name, Long phone) {
         this.name = name;
         this.phone = phone;

@@ -16,7 +16,7 @@ public class SubItemTypeRequest {
         this.name = name;
     }
 
-    public int getExtraPrice() {
+    public Integer getExtraPrice() {
         return extraPrice;
     }
 

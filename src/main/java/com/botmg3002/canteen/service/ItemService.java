@@ -1,6 +1,7 @@
 package com.botmg3002.canteen.service;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,12 @@ public class ItemService {
         return itemRepository.findById(id);
     }
     public Item save(Item item) {
+        
+        item.getSubItemTypes().forEach(subItem->subItem.setItem(item));
+
         return itemRepository.save(item);
+    }
+    public Stream<Item> findAll() {
+        return itemRepository.findAll().stream();
     }
 }

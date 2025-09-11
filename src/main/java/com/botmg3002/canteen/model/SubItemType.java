@@ -20,6 +20,19 @@ public class SubItemType {
     @Column(nullable = false)
     private Integer extraPrice;
 
+    public SubItemType(){}
+
+    public SubItemType(Long id, String name, Integer extraPrice, Item item) {
+        this.id = id;
+        this.name = name;
+        this.extraPrice = extraPrice;
+        this.item = item;
+    }
+
+    public SubItemType(Long id) {
+        this.id = id;
+    }
+
     @ManyToOne
     @JoinColumn(name = "itemId", nullable = false, updatable = false)
     private Item item;
@@ -39,14 +52,7 @@ public class SubItemType {
     public void setName(String name) {
         this.name = name;
     }
-
-    public int getExtraPrice() {
-        return extraPrice;
-    }
-
-    public void setExtraPrice(int extraPrice) {
-        this.extraPrice = extraPrice;
-    }
+    
 
     public Item getItem() {
         return item;
@@ -54,6 +60,14 @@ public class SubItemType {
 
     public void setItem(Item item) {
         this.item = item;
+    }
+
+    public Integer getExtraPrice() {
+        return extraPrice;
+    }
+
+    public void setExtraPrice(Integer extraPrice) {
+        this.extraPrice = extraPrice;
     }
     
 }
