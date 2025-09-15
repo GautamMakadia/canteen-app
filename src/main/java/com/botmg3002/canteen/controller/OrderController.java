@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -98,6 +99,17 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
+    @GetMapping("/customer/today")
+    @PreAuthorize("hashRole('CUSTOMER')")
+    public ResponseEntity<List<OrderResponse>> findTodayOrder(Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+
+        Customer customer = customerService.findByUserId(user.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No Customer Found."));
+
+        return ResponseEntity.ok(orderService.findTodayOrderByCustomer(customer));
+    }
+
     @GetMapping("/history")
     public ResponseEntity<List<OrderResponse>> getOrderHistry(@RequestHeader("X-USER-ID") Long userId) {
         Optional<Customer> customerOptional = customerService.findByUserId(userId);
@@ -133,7 +145,7 @@ public class OrderController {
                         .comment("ping")
                         .build()));
     }
-    
+
     @GetMapping(value = "/stream/customer", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<OrderResponse>> streamCustomerOrders(Authentication authentication) {
         User user = (User) authentication.getPrincipal();

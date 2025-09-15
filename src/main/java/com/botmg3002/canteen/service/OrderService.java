@@ -149,6 +149,10 @@ public class OrderService {
         return orderRepository.findTodayOrdersByCanteenId(canteenId);
     }
 
+    public List<OrderResponse> findTodayOrderByCustomer(Customer customer) {
+        return orderRepository.findTodayOrderByCustomer(customer).map(orderMapper::toResponse).toList();
+    }
+
     private boolean isValidTransition(OrderStatus from, OrderStatus to) {
         return switch (from) {
             case CREATED -> (to == OrderStatus.PREPARING || to == OrderStatus.COMPLETED || to == OrderStatus.CANCELED);
