@@ -46,9 +46,9 @@ INSERT INTO sub_item_type (extra_price, name, item_id) VALUES
 -- Orders
 INSERT INTO orders (created_at, item_count, status, total, canteen_id, customer_id) VALUES
 (DATE_SUB(NOW(), INTERVAL 1 DAY), 2, 'CREATED', 100, (SELECT id FROM canteen WHERE name='Main Campus Canteen'), (SELECT id FROM customer WHERE name='John Doe')),
-(DATE_SUB(NOW(), INTERVAL 2 DAY), 3, 'CONFIRMED', 150, (SELECT id FROM canteen WHERE name='Engineering Block Canteen'), (SELECT id FROM customer WHERE name='Jane Smith')),
+(DATE_SUB(NOW(), INTERVAL 2 DAY), 3, 'PREPARING', 150, (SELECT id FROM canteen WHERE name='Engineering Block Canteen'), (SELECT id FROM customer WHERE name='Jane Smith')),
 (DATE_SUB(NOW(), INTERVAL 3 DAY), 1, 'PREPARING', 50, (SELECT id FROM canteen WHERE name='Main Campus Canteen'), (SELECT id FROM customer WHERE name='John Doe')),
-(DATE_SUB(NOW(), INTERVAL 4 DAY), 2, 'RECEIVED', 120, (SELECT id FROM canteen WHERE name='Engineering Block Canteen'), (SELECT id FROM customer WHERE name='Jane Smith'));
+(DATE_SUB(NOW(), INTERVAL 4 DAY), 2, 'COMPLETED', 120, (SELECT id FROM canteen WHERE name='Engineering Block Canteen'), (SELECT id FROM customer WHERE name='Jane Smith'));
 
 -- Order Items
 INSERT INTO order_item (quantity, item_id, order_id, sub_item_type_id) VALUES

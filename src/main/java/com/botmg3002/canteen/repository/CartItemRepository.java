@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.botmg3002.canteen.model.CartItem;
-import com.botmg3002.canteen.model.Customer;
 
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 

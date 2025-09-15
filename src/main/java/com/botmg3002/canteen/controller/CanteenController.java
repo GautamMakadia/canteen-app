@@ -15,6 +15,7 @@ import com.botmg3002.canteen.schema.order.OrderResponse;
 import com.botmg3002.canteen.service.CanteenService;
 import com.botmg3002.canteen.service.OrderService;
 
+
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +29,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("canteen")
@@ -62,6 +62,14 @@ public class CanteenController {
         return ResponseEntity
                 .created(location)
                 .body(canteenMapper.toResponse(canteen));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<List<CanteenResponse>> findAll() {
+        var canteens = canteenService.findAll();
+
+        return ResponseEntity.ok(
+                canteens.stream().map(canteenMapper::toResponse).collect(Collectors.toList()));
     }
 
     @GetMapping("{id}")
@@ -104,7 +112,7 @@ public class CanteenController {
     // todo: get order history
     @GetMapping("/{id}/order/today")
     public ResponseEntity<List<OrderResponse>> findTodayOrders(Authentication authentication,
-                                                               @PathVariable("id") Long canteenId) {
+            @PathVariable("id") Long canteenId) {
         var orders = orderService.findTodayOrdersByCanteenId(canteenId)
                 .stream()
                 .map(orderMapper::toResponse)

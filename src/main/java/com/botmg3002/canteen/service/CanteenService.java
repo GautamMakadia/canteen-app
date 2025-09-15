@@ -1,5 +1,6 @@
 package com.botmg3002.canteen.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,10 @@ public class CanteenService {
 
     @Autowired
     private CanteenRepository canteenRepository;
+
+    public List<Canteen> findAll() {
+        return canteenRepository.findAll();
+    }
 
     public Optional<Canteen> findById(Long id) {
         return canteenRepository.findById(id);
