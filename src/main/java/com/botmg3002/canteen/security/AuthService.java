@@ -72,14 +72,18 @@ public class AuthService {
         
         if (newUser.getRole() == UserRole.ADMIN) {
             Admin admin = new Admin(signupRequest.getName(), signupRequest.getPhone());
+            
             newUser.setAdmin(admin);
+            admin.setUser(newUser);
+
             newUser = userRepository.save(newUser);
 
             signinResponse.setName(newUser.getAdmin().getName());
             signinResponse.setPhone(newUser.getAdmin().getPhone());
         } else {
             Customer customer = new Customer(signupRequest.getName(), signupRequest.getPhone());
-
+            customer.setUser(newUser);
+            
             newUser.setCustomer(customer);
             newUser = userRepository.save(newUser);
 

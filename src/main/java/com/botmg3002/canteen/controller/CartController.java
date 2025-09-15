@@ -78,6 +78,7 @@ public class CartController {
 	@GetMapping("")
 	public ResponseEntity<List<CartItemResponse>> findByCustomer(Authentication authentication) {
 		User user = (User) authentication.getPrincipal();
+		System.out.println(user);
 		Customer customer = customerService
 				.findByUserId(user.getId())
 				.orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_ACCEPTABLE,
