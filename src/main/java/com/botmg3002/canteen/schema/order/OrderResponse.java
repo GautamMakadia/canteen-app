@@ -2,6 +2,9 @@ package com.botmg3002.canteen.schema.order;
 
 import java.util.List;
 
+import com.botmg3002.canteen.schema.canteen.CanteenResponse;
+import com.botmg3002.canteen.schema.customer.CustomerResponse;
+
 
 public class OrderResponse {
     private Long id;
@@ -11,6 +14,8 @@ public class OrderResponse {
     private int itemCount;
     private String status;
     private List<OrderItemResponse> orderItems;
+    private CustomerResponse customer;
+    private CanteenResponse canteen;
 
     public Long getId() {
         return id;
@@ -66,5 +71,21 @@ public class OrderResponse {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public CustomerResponse getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerResponse customer) {
+        this.customer = customer;
+    }
+
+    public CanteenResponse getCanteen() {
+        return canteen;
+    }
+
+    public void setCanteen(CanteenResponse canteen) {
+        this.canteen = canteen;
     }
 }

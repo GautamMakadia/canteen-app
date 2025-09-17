@@ -7,8 +7,17 @@ import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
 import com.botmg3002.canteen.model.Order;
+import com.botmg3002.canteen.schema.canteen.CanteenMapper;
+import com.botmg3002.canteen.schema.customer.CustomerMapper;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = { OrderItemMapper.class })
+@Mapper(
+    componentModel = MappingConstants.ComponentModel.SPRING, 
+    uses = { 
+        OrderItemMapper.class,
+        CustomerMapper.class,
+        CanteenMapper.class 
+    }
+)
 public interface OrderMapper {
 
     @Mapping(target = "id", ignore = true)
@@ -28,7 +37,7 @@ public interface OrderMapper {
         }
 
         if (order.getOrderItems() != null) {
-            order.getOrderItems().forEach((orderItem)->{
+            order.getOrderItems().forEach((orderItem) -> {
                 orderItem.setOrder(order);
             });
         }

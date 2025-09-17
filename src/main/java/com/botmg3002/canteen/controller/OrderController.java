@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -66,7 +65,13 @@ public class OrderController {
     }
 
     @PostMapping("")
-    public ResponseEntity<OrderResponse> createOrder(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<OrderResponse> createOrder(Authentication authentication, @RequestBody OrderRequest orderRequest) {
+        User user = (User) authentication.getPrincipal();
+
+        Customer customer = customerService.findByUserId(user.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No Customer Found."));
+
+        orderRequest.setCustomerId(customer.getId());
         OrderResponse orderResponse = orderService.save(orderRequest);
 
         return ResponseEntity
@@ -100,14 +105,13 @@ public class OrderController {
     }
 
     @GetMapping("/customer/today")
-    @PreAuthorize("hashRole('CUSTOMER')")
     public ResponseEntity<List<OrderResponse>> findTodayOrder(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
 
         Customer customer = customerService.findByUserId(user.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No Customer Found."));
 
-        return ResponseEntity.ok(orderService.findTodayOrderByCustomer(customer));
+        return ResponseEntity.ok(orderService.findTodayOrderByCustomer(customer.getId()));
     }
 
     @GetMapping("/history")
