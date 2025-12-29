@@ -13,11 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.botmg3002.canteen.event.OrderPublisher;
+import com.botmg3002.canteen.model.Canteen;
 import com.botmg3002.canteen.model.Customer;
 import com.botmg3002.canteen.model.Order;
 import com.botmg3002.canteen.model.OrderStatus;
@@ -42,7 +42,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @RequestMapping("order")
 public class OrderController {
 
-    private final OrderPublisher orderPublisher;
+    @Autowired
+    private OrderPublisher orderPublisher;
 
     @Autowired
     private OrderService orderService;
@@ -53,10 +54,6 @@ public class OrderController {
     @Autowired
     private OrderMapper orderMapper;
 
-    OrderController(OrderPublisher orderPublisher) {
-        this.orderPublisher = orderPublisher;
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> findById(@PathVariable Long id) {
         return orderService.findById(id)
@@ -65,7 +62,10 @@ public class OrderController {
     }
 
     @PostMapping("")
-    public ResponseEntity<OrderResponse> createOrder(Authentication authentication, @RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<OrderResponse> createOrder(
+            Authentication authentication,
+            @RequestBody OrderRequest orderRequest
+    ) {
         User user = (User) authentication.getPrincipal();
 
         Customer customer = customerService.findByUserId(user.getId())
@@ -79,9 +79,9 @@ public class OrderController {
                 .body(orderResponse);
     }
 
-    @PutMapping("{orderId}/status")
+    @PutMapping("{orderId}/status/{status}")
     public ResponseEntity<OrderResponse> updateStatus(Authentication authentication, @PathVariable Long orderId,
-            @RequestParam OrderStatus status) {
+                                                      @PathVariable OrderStatus status) {
         User user = (User) authentication.getPrincipal();
 
         if (user.getRole() != UserRole.ADMIN) {
@@ -132,21 +132,38 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
-    @GetMapping(value = "/stream/status/{status}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ServerSentEvent<OrderResponse>> createdOrdersStream(Authentication authentication,
-            @PathVariable String status) {
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<OrderResponse>> findByStatusInToday(Authentication authentication,
+                                                                   @PathVariable String status) {
+
+        User user = (User) authentication.getPrincipal();
+
+        if (user.getRole() != UserRole.ADMIN) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only Admin Can Access.");
+        }
+
+        Long canteenId = user.getAdmin().getCanteen().getId();
+
+        var orders = orderService.findTodayByOrderStatus(canteenId, OrderStatus.valueOf(status));
+
+        return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<ServerSentEvent<OrderResponse>> createdOrdersStream(Authentication authentication) {
 
         User user = (User) authentication.getPrincipal();
 
         if (user.getRole() != UserRole.ADMIN) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only Admin Can See The Order Stream");
         }
+        Canteen canteen = user.getAdmin().getCanteen();
 
         return orderPublisher.getSink().asFlux()
-                .filter(order -> order.getStatus().equals(status.toUpperCase()))
+                .filter(order -> order.getCanteen().getId().equals(canteen.getId()))
                 .map(order -> ServerSentEvent.builder(order).build())
                 .mergeWith(Flux.interval(Duration.ofSeconds(15)).map((seq) -> ServerSentEvent.<OrderResponse>builder()
-                        .comment("ping")
+                        .comment("listing for canteen = " + canteen.toString())
                         .build()));
     }
 

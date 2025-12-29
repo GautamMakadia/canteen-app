@@ -8,8 +8,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Admin {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,49 +31,19 @@ public class Admin {
     @Column(nullable = false, unique = true)
     private Long phone;
     
+    @EqualsAndHashCode.Exclude
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "userId")
     private User user;
 
-    public Admin() {}
-    
-    public Admin(String name, Long phone) {
-        this.name = name;
-        this.phone = phone;
-    }
+    @ManyToOne
+    @JoinColumn(name = "canteenId")
+    private Canteen canteen;
 
-    public Long getId() {
-        return id;
+    @Override
+    public String toString() {
+        return "admin";
     }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getPhone() {
-        return phone;
-    }
-
-    public void setPhone(Long phone) {
-        this.phone = phone;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
 
     
 }   

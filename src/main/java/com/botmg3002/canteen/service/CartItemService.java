@@ -69,7 +69,7 @@ public class CartItemService {
             if (existing.isPresent()) {
 
                 CartItem cartItem = existing.get();
-                cartItem.incrementQuntity();
+                cartItem.incrementQuantity();
                 return cartItemRepository.save(cartItem);
 
             }

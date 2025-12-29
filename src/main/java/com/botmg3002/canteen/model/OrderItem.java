@@ -10,7 +10,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Check(constraints = "quantity > 0")
 public class OrderItem {
@@ -32,61 +39,5 @@ public class OrderItem {
 
     @Column(nullable = false)
     private Integer quantity = 1;
-
-    public OrderItem() {
-    }
-
-    public OrderItem(Long id, Item item, int quantity) {
-        this.id = id;
-        this.item = item;
-        this.quantity = quantity;
-    }
-
-    public OrderItem(Order order, Item item, SubItemType subItemType, int quantity) {
-        this.order = order;
-        this.item = item;
-        this.subItemType = subItemType;
-        this.quantity = quantity;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public Item getItem() {
-        return item;
-    }
-
-    public void setItem(Item item) {
-        this.item = item;
-    }
-
-    public SubItemType getSubItemType() {
-        return subItemType;
-    }
-
-    public void setSubItemType(SubItemType subItemType) {
-        this.subItemType = subItemType;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
 
 }

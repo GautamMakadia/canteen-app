@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.botmg3002.canteen.event.OrderPublisher;
@@ -29,8 +28,11 @@ import com.botmg3002.canteen.schema.order.OrderResponse;
 import reactor.core.publisher.Sinks.EmitResult;
 
 @Service
-@Transactional
 public class OrderService {
+
+    
+    @Autowired
+    private OrderMapper orderMapper;
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -40,9 +42,6 @@ public class OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private OrderMapper orderMapper;
 
     @Autowired
     private OrderPublisher orderPublisher;
@@ -79,16 +78,16 @@ public class OrderService {
                     var subItemType = cartItem.getSubItemType();
                     final var item = cartItem.getItem();
 
-                    orderItem.setItem(cartItem.getItem());
+                    orderItem.setItem(item);
                     orderItem.setSubItemType(cartItem.getSubItemType());
                     orderItem.setQuantity(cartItem.getQuantity());
                     orderItem.setOrder(order);
 
                     int price = item.getPrice();
                     int extraPrice = subItemType == null ? 0 : subItemType.getExtraPrice();
-                    int quantitiy = cartItem.getQuantity();
+                    int quantity = cartItem.getQuantity();
 
-                    total.addAndGet((price + extraPrice) * quantitiy);
+                    total.addAndGet((price + extraPrice) * quantity);
 
                     return orderItem;
                 })
@@ -99,7 +98,7 @@ public class OrderService {
         order.setCanteen(canteen);
         order.setCustomer(customer);
         order.setItemCount(itemCount);
-        order.setTotal(Integer.valueOf(total.get()));
+        order.setTotal(total.get());
         order.setStatus(orderRequest.getStatus());
         order.setOrderItems(orderItems);
         order.setCanteen(canteen);
@@ -159,5 +158,9 @@ public class OrderService {
             case PREPARING -> (to == OrderStatus.COMPLETED);
             case COMPLETED, CANCELED -> false;
         };
+    }
+
+    public List<OrderResponse> findTodayByOrderStatus(final Long canteenId,final OrderStatus status) {
+        return orderRepository.findTodayByOrderStatus(canteenId, status).map(orderMapper::toResponse).toList();
     }
 }

@@ -1,27 +1,17 @@
 package com.botmg3002.canteen.schema.Item;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SubItemTypeRequest {
    
     private String name;
     
     private Integer extraPrice;
-
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getExtraPrice() {
-        return extraPrice;
-    }
-
-    public void setExtraPrice(int extraPrice) {
-        this.extraPrice = extraPrice;
-    }
-    
+   
 }

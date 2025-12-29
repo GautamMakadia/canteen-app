@@ -1,10 +1,12 @@
 package com.botmg3002.canteen.schema.order;
 
 import org.mapstruct.AfterMapping;
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.ReportingPolicy;
 
 import com.botmg3002.canteen.model.Order;
 import com.botmg3002.canteen.schema.canteen.CanteenMapper;
@@ -16,7 +18,9 @@ import com.botmg3002.canteen.schema.customer.CustomerMapper;
         OrderItemMapper.class,
         CustomerMapper.class,
         CanteenMapper.class 
-    }
+    },
+    injectionStrategy = InjectionStrategy.CONSTRUCTOR,
+    unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface OrderMapper {
 
@@ -24,6 +28,8 @@ public interface OrderMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "canteen.id", source = "canteenId")
     @Mapping(target = "customer.id", source = "customerId")
+    @Mapping(target = "total", ignore = true )
+    @Mapping(target = "orderItems", ignore = true)
     Order toEntity(OrderRequest orderRequest);
 
     @Mapping(target = "canteenId", source = "canteen.id")

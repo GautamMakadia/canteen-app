@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.botmg3002.canteen.model.Order;
+import com.botmg3002.canteen.model.OrderStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,6 +39,17 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
         return findByCustomerIdAndCreatedAtBetween(customerId, startOfDay, endOfDay).stream();
     }
+
+    default Stream<Order> findTodayByOrderStatus(Long canteenId, OrderStatus status) {
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.atTime(LocalTime.MAX);
+
+
+        return findByCanteenIdAndStatusAndCreatedAtBetween(canteenId, status, startOfDay, endOfDay);
+    }
+
+    Stream<Order> findByCanteenIdAndStatusAndCreatedAtBetween(Long canteenId, OrderStatus status, LocalDateTime start, LocalDateTime end);
 
     List<Order> findByCustomerIdAndCreatedAtBetween(Long customerId, LocalDateTime start, LocalDateTime end);
 }

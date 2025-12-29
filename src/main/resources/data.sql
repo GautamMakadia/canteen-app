@@ -2,11 +2,18 @@
 INSERT INTO user (email, password, role) VALUES
 ('admin@canteen.com', '$2a$10$8UGiNs0BvdV0sa1VPrUX4OFjaKC610wILyJL5WBlM4ErC5lXO05Zm', 'ADMIN'),
 ('john.doe@example.com', '$2a$10$8UGiNs0BvdV0sa1VPrUX4OFjaKC610wILyJL5WBlM4ErC5lXO05Zm', 'CUSTOMER'),
-('jane.smith@example.com', '$2a$10$8UGiNs0BvdV0sa1VPrUX4OFjaKC610wILyJL5WBlM4ErC5lXO05Zm', 'CUSTOMER');
+('jane.smith@example.com', '$2a$10$8UGiNs0BvdV0sa1VPrUX4OFjaKC610wILyJL5WBlM4ErC5lXO05Zm', 'CUSTOMER'),
+('admin2@canteen.com', '$2a$10$8UGiNs0BvdV0sa1VPrUX4OFjaKC610wILyJL5WBlM4ErC5lXO05Zm', 'ADMIN');
+
 
 -- Admin (linked to user_id 1)
-INSERT INTO admin (name, phone, user_id) VALUES
-('Super Admin', 9876543210, (SELECT id FROM user WHERE email='admin@canteen.com'));
+INSERT INTO canteen (name) VALUES
+('Main Campus Canteen'),
+('Engineering Block Canteen');
+
+INSERT INTO admin (name, phone, user_id, canteen_id) VALUES
+('Super Admin', 9876543210, (SELECT id FROM user WHERE email='admin@canteen.com'), (select id from canteen where canteen.name = 'Main Campus Canteen')),
+('Super2 Admin', 9876543211, (SELECT id FROM user WHERE email='admin2@canteen.com'), (select id from canteen where canteen.name = 'Engineering Block Canteen'));
 
 -- Customers (linked to user_id)
 INSERT INTO customer (name, phone, user_id) VALUES
@@ -14,9 +21,7 @@ INSERT INTO customer (name, phone, user_id) VALUES
 ('Jane Smith', 9876501234, (SELECT id FROM user WHERE email='jane.smith@example.com'));
 
 -- Canteens
-INSERT INTO canteen (name) VALUES
-('Main Campus Canteen'),
-('Engineering Block Canteen');
+
 
 -- Categories
 INSERT INTO category (image_url, name, canteen_id) VALUES

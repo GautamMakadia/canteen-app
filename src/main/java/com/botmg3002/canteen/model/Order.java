@@ -5,8 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,7 +17,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "`orders`")
 public class Order {
@@ -48,85 +53,14 @@ public class Order {
     @JoinColumn(name = "customerId")
     private Customer customer;
 
-    public Order () {}
-
-    public Order(Canteen canteen, Customer customer, Integer itemCount) {
-        this.canteen = canteen;
-        this.customer = customer;
-        this.itemCount = itemCount;
-    }
-
     public boolean addOrderItem(Item item, SubItemType subItemType, Integer quantitiy) {
-        OrderItem orderItem = new OrderItem(this, item, subItemType, quantitiy);
+        OrderItem orderItem = new OrderItem();
+        
+        orderItem.setOrder(this);
+        orderItem.setItem(item);
+        orderItem.setSubItemType(subItemType);
+        orderItem.setQuantity(quantitiy);
+
         return orderItems.add(orderItem);
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
-    public Integer getItemCount() {
-        return itemCount;
-    }
-
-    public void setItemCount(Integer itemCount) {
-        this.itemCount = itemCount;
-    }
-
-    public Integer getTotal() {
-        return total;
-    }
-
-    public void setTotal(Integer total) {
-        this.total = total;
-    }
-
-    public Canteen getCanteen() {
-        return canteen;
-    }
-
-    public void setCanteen(Canteen canteen) {
-        this.canteen = canteen;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-
-    public Set<OrderItem> getOrderItems() {
-        return orderItems;
-    }
-
-    public void setOrderItems(Set<OrderItem> orderItems) {
-        this.orderItems = orderItems;
-    }
-
-    
-
-    
 }

@@ -11,7 +11,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./mysql_data:/var/lib/mysql:Z
+      - mysql_data:/var/lib/mysql:rw
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpass"]
       interval: 10s
@@ -24,10 +24,9 @@ services:
     container_name: spring_app
     depends_on:
       - mysql
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/mydb
-      SPRING_DATASOURCE_USERNAME: myuser
-      SPRING_DATASOURCE_PASSWORD: mypass
     ports:
       - "8080:8080"
     restart: always
+  
+volumes:
+  mysql_data:

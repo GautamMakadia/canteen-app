@@ -15,7 +15,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Customer {
 
@@ -30,6 +39,7 @@ public class Customer {
     private Long phone;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
     @JoinColumn(name = "userId")
     private User user;
 
@@ -39,68 +49,9 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders = new ArrayList<>();
 
-    public Customer() {
+
+    @Override
+    public String toString() {
+        return "customer = {\n\tid: "+ id + ",\n\tname: "+name+" \n}";
     }
-
-    
-
-    public Customer(Long id) {
-        this.id = id;
-    }
-
-
-
-    public Customer(String name, Long phone) {
-        this.name = name;
-        this.phone = phone;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Long getPhone() {
-        return phone;
-    }
-
-    public void setPhone(Long phone) {
-        this.phone = phone;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Set<CartItem> getCartItems() {
-        return cartItems;
-    }
-
-    public void setCartItems(Set<CartItem> cartItems) {
-        this.cartItems = cartItems;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
-
 }

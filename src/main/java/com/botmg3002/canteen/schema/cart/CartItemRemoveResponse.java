@@ -1,28 +1,14 @@
 package com.botmg3002.canteen.schema.cart;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class CartItemRemoveResponse {
     String message;
     Integer quantity;
-
-    public CartItemRemoveResponse(String message, Integer quantity) {
-        this.message = message;
-        this.quantity = quantity;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
 }

@@ -61,17 +61,19 @@ public class AuthService {
         if (user.isPresent())
             throw new UserAlreadyExistsException("User with email " + signupRequest.getEmail() + " already exists");
 
-        User newUser = new User(
-                signupRequest.getEmail(),
-                passwordEncoder.encode(signupRequest.getPassword()),
-                UserRole.valueOf(signupRequest.getRole()));
+        User newUser = new User();
+        newUser.setEmail(signupRequest.getEmail());
+        newUser.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+        newUser.setRole(UserRole.valueOf(signupRequest.getRole()));
 
         SigninResponse signinResponse = new SigninResponse();
         signinResponse.setEmail(newUser.getEmail());
         signinResponse.setRole(newUser.getRole());
         
         if (newUser.getRole() == UserRole.ADMIN) {
-            Admin admin = new Admin(signupRequest.getName(), signupRequest.getPhone());
+            Admin admin = new Admin();
+            admin.setName(signupRequest.getName());
+            admin.setPhone(signupRequest.getPhone());
             
             newUser.setAdmin(admin);
             admin.setUser(newUser);
@@ -81,7 +83,9 @@ public class AuthService {
             signinResponse.setName(newUser.getAdmin().getName());
             signinResponse.setPhone(newUser.getAdmin().getPhone());
         } else {
-            Customer customer = new Customer(signupRequest.getName(), signupRequest.getPhone());
+            Customer customer = new Customer();
+            customer.setName(signupRequest.getName());
+            customer.setPhone(signupRequest.getPhone());
             customer.setUser(newUser);
             
             newUser.setCustomer(customer);

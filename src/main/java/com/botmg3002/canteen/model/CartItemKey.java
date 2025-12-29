@@ -6,6 +6,14 @@ import java.util.Objects;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Embeddable
 public class CartItemKey implements Serializable {
 
@@ -17,30 +25,6 @@ public class CartItemKey implements Serializable {
 
     @Column(name = "sub_item_type_id")
     private Long subItemTypeId;
-
-    public Long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
-    }
-
-    public Long getItemId() {
-        return itemId;
-    }
-
-    public void setItemId(Long itemId) {
-        this.itemId = itemId;
-    }
-
-    public Long getSubItemTypeId() {
-        return subItemTypeId;
-    }
-
-    public void setSubItemTypeId(Long subItemTypeId) {
-        this.subItemTypeId = subItemTypeId;
-    }
 
     @Override
     public boolean equals(Object obj) {

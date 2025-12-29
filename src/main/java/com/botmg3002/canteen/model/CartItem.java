@@ -67,7 +67,7 @@ public class CartItem {
 
     
 
-    public void incrementQuntity() {
+    public void incrementQuantity() {
         this.quantity = (this.quantity == null ? 1 : this.quantity + 1);
     }
 

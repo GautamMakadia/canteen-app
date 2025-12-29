@@ -9,7 +9,7 @@ COPY gradle ./gradle
 COPY build.gradle settings.gradle ./
 
 # Download dependencies
-RUN ./gradlew build --no-daemon || return 0
+RUN ./gradlew clean build --no-daemon || return 0
 
 # Copy project source
 COPY src /app/src
